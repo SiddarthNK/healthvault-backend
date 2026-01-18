@@ -19,7 +19,11 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(express.json());
 app.use(cors({
-    origin: ['https://healthvault-frontend-u2ch.vercel.app', 'http://localhost:5173'],
+    origin: [
+        'https://healthvault-frontend-u2ch.vercel.app',
+        'https://healthvault-frontend.vercel.app',
+        'http://localhost:5173'
+    ],
     credentials: true
 }));
 
