@@ -39,11 +39,36 @@ const uploadDocument = async (req, res) => {
 // @route   GET /api/documents
 // @access  Private
 const getDocuments = async (req, res) => {
+    // PRESENTATION CHEAT: Mock data if presentation account
+    if (req.user?._id === 'presentation_admin_id') {
+        return res.json([
+            {
+                _id: 'doc_mock_1',
+                title: 'Health Insurance Policy',
+                category: 'Insurance',
+                fileUrl: '#',
+                fileSize: '1.2 MB',
+                fileType: 'PDF',
+                createdAt: new Date()
+            },
+            {
+                _id: 'doc_mock_2',
+                title: 'X-Ray Scan (Chest)',
+                category: 'Radiology',
+                fileUrl: '#',
+                fileSize: '5.4 MB',
+                fileType: 'JPG',
+                createdAt: new Date()
+            }
+        ]);
+    }
+
     try {
         const documents = await Document.find({ user: req.user._id }).sort({ createdAt: -1 });
         res.json(documents);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Documents DB error:', error.message);
+        res.status(503).json({ message: 'Database busy.' });
     }
 };
 

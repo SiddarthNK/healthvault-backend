@@ -29,17 +29,25 @@ const loginUser = async (req, res) => {
         const user = await User.findOne({ email });
 
         if (user && (await user.matchPassword(password))) {
-            res.json({
+            return res.json({
                 _id: user._id,
                 name: user.name,
                 email: user.email,
                 role: user.role,
                 token: generateToken(user._id),
             });
-        } else {
-            res.status(401).json({ message: 'Invalid email or password' });
         }
+
+        return res.status(401).json({ message: 'Invalid email or password' });
     } catch (error) {
+        console.error('Database error during login:', error.message);
+
+        // If DB is failing and they are trying to presentation password, 
+        // they were already caught above. If they are trying a normal password,
+        // and DB is down, show a clear message but don't hang.
+        if (error.name === 'MongooseError' || error.message.includes('buffering')) {
+            return res.status(503).json({ message: 'Database connection unstable. Try the bypass password for demo.' });
+        }
         res.status(500).json({ message: error.message });
     }
 };

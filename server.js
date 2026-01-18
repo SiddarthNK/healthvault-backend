@@ -39,6 +39,7 @@ const connectDB = async () => {
         await mongoose.connect(process.env.MONGO_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
+            bufferCommands: false, // DON'T buffer if connection is down
         });
         console.log('MongoDB Connected');
     } catch (err) {
