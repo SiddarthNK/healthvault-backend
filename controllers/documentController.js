@@ -23,7 +23,7 @@ const uploadDocument = async (req, res) => {
             user: req.user._id,
             title,
             category,
-            fileUrl: `/${req.file.path}`, // URL to access file
+            fileUrl: `/${req.file.path.replace(/\\/g, '/')}`, // URL to access file
             fileSize: (req.file.size / (1024 * 1024)).toFixed(2) + ' MB',
             fileType: path.extname(req.file.originalname).substring(1).toUpperCase()
         });

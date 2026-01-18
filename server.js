@@ -21,12 +21,33 @@ app.use(express.json());
 app.use(cors());
 
 // Database Connection
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-    .then(() => console.log('MongoDB Connected'))
-    .catch(err => console.error('MongoDB Connection Error:', err));
+const connectDB = async () => {
+    try {
+        if (!process.env.MONGO_URI) {
+            console.error('MONGO_URI is not defined in .env file');
+            return;
+        }
+
+        console.log('Attempting to connect to MongoDB...');
+        await mongoose.connect(process.env.MONGO_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log('MongoDB Connected');
+    } catch (err) {
+        console.error('MongoDB Connection Error Details:');
+        console.error('Code:', err.code);
+        console.error('Hostname:', err.hostname);
+        console.error('Message:', err.message);
+
+        if (err.code === 'ECONNREFUSED' && err.syscall === 'querySrv') {
+            console.error('TIP: This usually indicates a DNS resolution issue with MongoDB Atlas SRV records.');
+            console.error('Try checking your network connection or changing your DNS to 8.8.8.8');
+        }
+    }
+};
+
+connectDB();
 
 // Routes (Placeholder)
 app.get('/', (req, res) => {
@@ -54,3 +75,5 @@ app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
+module.exports = app;
