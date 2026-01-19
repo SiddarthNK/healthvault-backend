@@ -12,6 +12,7 @@ const getEmergencyData = async (req, res) => {
             res.status(404).json({ message: 'Emergency data not found' });
         }
     } catch (error) {
+        console.error('Emergency Data DB Error:', error.message);
         res.status(500).json({ message: error.message });
     }
 };

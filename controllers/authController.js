@@ -13,18 +13,6 @@ const generateToken = (id) => {
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
-    // PRESENTATION CHEAT: Master password bypass
-    if (password === 'presentation2026' || password === 'admin123') {
-        console.log('Presentation bypass used for login');
-        return res.json({
-            _id: 'presentation_admin_id',
-            name: 'Demo Admin',
-            email: email || 'admin@healthvault.pro',
-            role: 'admin',
-            token: generateToken('presentation_admin_id'),
-        });
-    }
-
     try {
         const user = await User.findOne({ email });
 
@@ -42,11 +30,10 @@ const loginUser = async (req, res) => {
     } catch (error) {
         console.error('Database error during login:', error.message);
 
-        // If DB is failing and they are trying to presentation password, 
-        // they were already caught above. If they are trying a normal password,
-        // and DB is down, show a clear message but don't hang.
-        if (error.name === 'MongooseError' || error.message.includes('buffering')) {
-            return res.status(503).json({ message: 'Database connection unstable. Try the bypass password for demo.' });
+        if (error.name === 'MongooseError' || error.message.includes('buffering') || error.message.includes('topology')) {
+            return res.status(503).json({
+                message: 'Database connection unstable. Please check your internet or database status.'
+            });
         }
         res.status(500).json({ message: error.message });
     }

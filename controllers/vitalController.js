@@ -4,20 +4,6 @@ const Vital = require('../models/Vital');
 // @route   GET /api/vitals
 // @access  Private
 const getVitals = async (req, res) => {
-    // PRESENTATION CHEAT: Mock data if presentation account
-    if (req.user?._id === 'presentation_admin_id') {
-        return res.json([
-            {
-                _id: 'v_mock_1',
-                heartRate: 72,
-                bloodPressure: { systolic: 120, diastolic: 80 },
-                spo2: 98,
-                temperature: 98.6,
-                date: new Date()
-            }
-        ]);
-    }
-
     try {
         const vitals = await Vital.find({ user: req.user._id }).sort({ date: -1 });
         res.json(vitals);

@@ -40,7 +40,7 @@ const uploadDocument = async (req, res) => {
 // @access  Private
 const getDocuments = async (req, res) => {
     // PRESENTATION CHEAT: Mock data if presentation account
-    if (req.user?._id === 'presentation_admin_id') {
+    if (req.user?._id === 'presentation_user_id') {
         return res.json([
             {
                 _id: 'doc_mock_1',
